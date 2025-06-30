@@ -1,95 +1,58 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client'
+
+import { useEffect, useState } from "react"
+import MostrarDatos from "./components/MostrarDatos"
+import { Persona } from "./interfaces/interfacePersona"
+
+
+const InitialStatePersona:Persona={
+  nombre: "",
+  apellido: ""
+}
 
 export default function Home() {
-  return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>src/app/page.tsx</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const miStorage= window.localStorage
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+  const [Persona, setPersona] = useState(InitialStatePersona)
+  const [Personas, setPersonas] = useState<Persona[]>([])
+
+  useEffect(() => {
+    let ListadoStr = miStorage.getItem("Personas")
+    if (ListadoStr != null){
+      let ListadoParse = JSON.parse(ListadoStr)
+      setPersonas(ListadoParse)
+    }
+  }, [])
+  
+  const handlePersona=(name:string,value:string)=>{
+    setPersona(
+      {...Persona,[name]:value}
+    )
+  }
+
+  const handleRegistrar=()=>{
+    miStorage.setItem("Personas",JSON.stringify([...Personas,Persona]))
+  }
+
+  return (
+      <form className="form-text">
+        <h1>PERSONAS: {Persona.nombre} {Persona.apellido} </h1>
+        <input 
+          type="text" 
+          name="nombre"
+          onChange={(evento)=>handlePersona(evento.currentTarget.name,evento.currentTarget.value)}
+        /> <br />
+        <input 
+          type="text" 
+          name="apellido"
+          onChange={(evento)=>handlePersona(evento.currentTarget.name,evento.currentTarget.value)}
+          /> <br />
+        <button
+          onClick={()=>handleRegistrar()}>IKYI.SX
+        </button>
+        <form>
+            <MostrarDatos/>
+        </form>
+      </form>
   );
 }
