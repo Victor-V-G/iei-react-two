@@ -14,6 +14,7 @@ export default function Home() {
   const miStorage= window.localStorage
 
   const [Persona, setPersona] = useState(InitialStatePersona)
+  const [PersonaActualizar, setPersonaActualizar] = useState<Persona[]>([])
   const [Personas, setPersonas] = useState<Persona[]>([])
 
   useEffect(() => {
@@ -23,10 +24,26 @@ export default function Home() {
       setPersonas(ListadoParse)
     }
   }, [])
-  
+
+
+  useEffect(() => {
+    let ListadoStrActualizar = miStorage.getItem("PersonaActualizar")
+    if (ListadoStrActualizar != null){
+      let ListadoParseActualizar = JSON.parse(ListadoStrActualizar)
+      setPersonas(ListadoParseActualizar)
+    }
+  }, [])
+
+
   const handlePersona=(name:string,value:string)=>{
     setPersona(
       {...Persona,[name]:value}
+    )
+  }
+
+  const handlePersonaActualizar=(name:string,value:string)=>{
+    setPersonaActualizar(
+      {...PersonaActualizar,[name]:value}
     )
   }
 
@@ -34,8 +51,17 @@ export default function Home() {
     miStorage.setItem("Personas",JSON.stringify([...Personas,Persona]))
   }
 
+  const handleRegistrarActualizar=()=>{
+    miStorage.setItem("PersonaActualizar",JSON.stringify([...PersonaActualizar,Persona]))
+  }
+
+  const handleUpdate = (p:Persona)=>{
+    setPersona(p)
+  }
+
   return (
-      <form className="form-text">
+    <div className="form-text">
+      <form>
         <h1>PERSONAS: {Persona.nombre} {Persona.apellido} </h1>
         <input 
           type="text" 
@@ -48,11 +74,30 @@ export default function Home() {
           onChange={(evento)=>handlePersona(evento.currentTarget.name,evento.currentTarget.value)}
           /> <br />
         <button
-          onClick={()=>handleRegistrar()}>IKYI.SX
+          onClick={()=>handleRegistrar()}>REGISTRAR
         </button>
-        <form>
-            <MostrarDatos/>
-        </form>
       </form>
+
+      <MostrarDatos traerDatos = {handleUpdate}/>
+
+      <form>
+        <h1>PERSONAS ACTUALIZAR</h1>
+        <input 
+          type="text" 
+          name="nombre"
+          value={Persona.nombre}
+          onChange={(evento)=>handlePersonaActualizar(evento.currentTarget.name,evento.currentTarget.value)}
+        /> <br />
+        <input 
+          type="text" 
+          name="apellido"
+          value={Persona.apellido}
+          onChange={(evento)=>handlePersonaActualizar(evento.currentTarget.name,evento.currentTarget.value)}
+          /> <br />
+        <button
+          onClick={()=>handleRegistrarActualizar()}>ACTUALIZAR
+        </button>
+      </form>
+    </div>
   );
 }

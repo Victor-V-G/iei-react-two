@@ -3,7 +3,14 @@ import React from "react";
 import { useEffect, useState } from "react";
 import { Persona } from '../interfaces/interfacePersona'
 
-export const MostrarDatos = () => {
+
+interface Props{
+    traerDatos: (p: Persona) => void
+}
+
+//PARAMETROS SIGNIFICA PROPS
+
+export const MostrarDatos = (props:Props) => {
     const miStorage= window.localStorage
     
     // const [Persona, setPersona] = useState(InitialStatePersona)
@@ -16,9 +23,14 @@ export const MostrarDatos = () => {
           setPersonas(ListadoParse)
         }
       }, [])
+    
+    const queEditar = (index:number)=>{
+        alert("editando"+index)
+        props.traerDatos(Personas[index])
+    }
 
     return (
-        <>
+        <>  
             <table>
                 <thead>
                     <tr>
@@ -29,12 +41,19 @@ export const MostrarDatos = () => {
                 </thead>
                 <tbody>
                     {
-                        Personas.map((p)=>{
+                        Personas.map((p,index)=>{
                             return(
                                 <tr>
                                     <td>{p.nombre}</td> <br />
                                     <td>{p.apellido}</td> <br />
-                                    <td><button>EDITAR</button><button>ELIMINAR</button></td>
+                                    <td>
+                                        <button
+                                            onClick={()=>queEditar(index)}>EDITAR
+                                        </button>
+                                        <button
+                                            >ELIMINAR
+                                        </button>
+                                    </td>
                                 </tr>
                             )
                         })
