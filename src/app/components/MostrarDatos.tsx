@@ -2,6 +2,7 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { Persona } from '../interfaces/interfacePersona'
+import { obtenerPersonas } from "../FireBase/Promesas";
 
 
 interface Props{
@@ -17,11 +18,12 @@ export const MostrarDatos = (props:Props) => {
     const [Personas, setPersonas] = useState<Persona[]>([])
 
     useEffect(() => {
-        let ListadoStr = miStorage.getItem("Personas")
-        if (ListadoStr != null){
-          let ListadoParse = JSON.parse(ListadoStr)
-          setPersonas(ListadoParse)
-        }
+        obtenerPersonas().then((listado)=>{
+            setPersonas(listado)
+        }).catch((error)=>{
+            alert("no se pudo cargar el listado")
+            console.log(error)
+        })
       }, [])
     
     const queEditar = (index:number)=>{
